@@ -88,7 +88,7 @@ class results:
     self.metadata_links = [site_metadata + '?' + urlencode(p) for p in params]
     self.metadata = [requests.get(url, stream=True).json() for url in self.metadata_links]
       
-  def download_links(self, dir_path, metadata_file='metadata.json', metadata_status='status', status_ok='OK'):
+  def download_links(self, dir_path, filename='gsv_', metadata_file='metadata.json', metadata_status='status', status_ok='OK'):
     """Download Google Street View images from parameter queries if they are available.
     
     Args:
@@ -100,6 +100,8 @@ class results:
         Key name of the status value from :class:`api.results`.metadata response from the metadata API request.
       status_ok (str):
         Value from the metadata API response status indicating that an image is available.
+      filename (str):
+        Prefix of filename to use.
     """
     metadata = self.metadata
     if not path.isdir(dir_path):
@@ -108,7 +110,7 @@ class results:
     # (download) Download images if status from metadata is ok
     for i, url in enumerate(self.links):
       if metadata[i][metadata_status] == status_ok:
-        file_path = path.join(dir_path, 'gsv_' + str(i) + '.jpg')
+        file_path = path.join(dir_path, filename + str(i) + '.jpg')
         metadata[i]['_file'] = path.basename(file_path) # add file reference
         helpers.download(url, file_path)
     
